@@ -1,0 +1,27 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "build": "lerna run build",
+    "start": "lerna run start --scope=@phonophant/plugin-runner"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/plugins/*",
+      "packages/shared/*",
+      "packages/core/*",
+      "packages/core/plugin-runner/dist/plugins/npm",
+      "packages/core/plugin-runner/src/plugins/npm"
+    ],
+    "nohoist": [
+      "**@phonophant**",
+      "@phonophant**",
+      "@phonophant/rfid-trigger**",
+      "**rfid-trigger**",
+      "**"
+    ]
+  },  
+  "devDependencies": {
+    "lerna": "^6.0.3"
+  }
+}
