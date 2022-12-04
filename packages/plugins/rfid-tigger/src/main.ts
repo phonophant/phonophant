@@ -1,4 +1,3 @@
-import * as HID from 'node-hid';
 import { AppData, BasePlugin, PluginType } from '@phonophant/shared-models';
 
 export default class RfidTrigger extends BasePlugin<any> {
