@@ -2,8 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   NpmPluginDefinition,
+  NpmPlugin,
   PluginDefinition,
   PluginDefinitionSource,
+  Plugin,
+  LocalPlugin,
+  PackageJson,
 } from '@phonophant/shared-models';
 import * as cp from 'child_process';
 
@@ -28,26 +32,55 @@ export class PluginListLoader {
     return packageJSON;
   }
 
-  private requireModulesFromNpmPluginDefinition(npmPluginDefinitions: NpmPluginDefinition[], pathToNpmPackage: string) {
+  private instantiatePlugin<T extends LocalPlugin | NpmPlugin>(plugin: T, packagePath: string, mainFile: string): T {
+    if (!mainFile || !plugin.active) {
+      return plugin;
+    }
+
+    try {
+      const pathForRequire = path.join(packagePath, mainFile);
+      const requiredDefaultModule = require(pathForRequire);
+      plugin.instance = new requiredDefaultModule.default;      
+    } catch(e) {
+      console.log(`Could not instantiate module ${plugin.name}`);
+    }
+    return plugin;
+  }
+
+  private addMetaData(plugin: NpmPlugin, packagePath: string, packageJson: PackageJson): NpmPlugin {
+    const pluginWithMetaData = Object.assign({}, plugin);
+    if (packageJson.phonoplugin?.piletLocation) {
+      pluginWithMetaData.piletLocation = path.join(packagePath, packageJson.phonoplugin?.piletLocation);      
+    }
+    if (packageJson.phonoplugin) {
+      pluginWithMetaData.tags = packageJson.phonoplugin.tags || [];
+      pluginWithMetaData.settingsEndpoint = packageJson.phonoplugin.settingsEndpoint;
+    }
+    pluginWithMetaData.version = packageJson.version || '0.0.x';
+    pluginWithMetaData.description = packageJson.description || '';
+    pluginWithMetaData.author = packageJson.author || '';
+    
+    return pluginWithMetaData;
+  }
+
+  private mapPluginDefinitionsToPlugins(npmPluginDefinitions: NpmPluginDefinition[], pathToNpmPackage: string): NpmPlugin[] {
     return npmPluginDefinitions.map(pluginDefinition => {
-      const packagePath = path.join(pathToNpmPackage, 'node_modules', pluginDefinition.packageName);
+      let plugin = Object.assign({}, pluginDefinition) as NpmPlugin;
+      const packagePath = path.join(pathToNpmPackage, 'node_modules', plugin.packageName);
       const packageString = fs.readFileSync(path.join(packagePath, 'package.json')).toString();
       const packageJson = JSON.parse(packageString);
-      try {
-        const pathForRequire = path.join(packagePath, packageJson.main);
-        const requiredDefaultModule = require(pathForRequire);
-        pluginDefinition.instance = new requiredDefaultModule.default;      
-      } catch(e) {
-        console.log(`Could not instantiate module ${pluginDefinition.name}`);
-      }
-      return pluginDefinition;
+
+      plugin = this.instantiatePlugin(plugin, packagePath, packageJson.main);
+      plugin = this.addMetaData(plugin, packagePath, packageJson);
+      
+      return plugin;
     });
   }
   
-  private loadNpmPluginDefinitions(pluginDefinitions: PluginDefinition[]): Promise<PluginDefinition[]> {
+  private loadNpmPlugins(pluginDefinitions: PluginDefinition[]): Promise<Plugin[]> {
     return new Promise<PluginDefinition[]>((resolve, reject) => {
-      const npmPlugins = pluginDefinitions.filter(({ source }) => source === PluginDefinitionSource.Npm) as NpmPluginDefinition[];
-      const packageJSON = this.createPackageJSON(npmPlugins);
+      const npmPluginDefinitions = pluginDefinitions.filter(({ source }) => source === PluginDefinitionSource.Npm) as NpmPluginDefinition[];
+      const packageJSON = this.createPackageJSON(npmPluginDefinitions);
       const pathToNpmPackage = path.join(__dirname, '..', '..', 'plugins', 'npm');
       fs.writeFileSync(path.join(pathToNpmPackage, 'package.json'), JSON.stringify(packageJSON));
       cp.exec(
@@ -55,22 +88,26 @@ export class PluginListLoader {
         { cwd: pathToNpmPackage },
         (error) => {
           console.log(error);
-          const entryFiles = this.requireModulesFromNpmPluginDefinition(npmPlugins, pathToNpmPackage);
-          resolve(entryFiles);
+          const npmPlugins = this.mapPluginDefinitionsToPlugins(npmPluginDefinitions, pathToNpmPackage);
+          resolve(npmPlugins);
         }
       );
     });
   }
 
-  async loadPluginDefinitions(): Promise<PluginDefinition[]> {
+  async loadPlugins(): Promise<Plugin[]> {
     try {
       const pluginListString = fs.readFileSync(this.pluginListPath).toString();
       const pluginList = JSON.parse(pluginListString) as PluginDefinition[];
-      const plugins = await this.loadNpmPluginDefinitions(pluginList);
+      const plugins = await this.loadNpmPlugins(pluginList);
       return plugins;
     } catch (e) {
       console.log(e);
       return [];
     }
+  }
+
+  savePlugins(plugins: PluginDefinition[]) {
+    fs.writeFileSync(this.pluginListPath, JSON.stringify(plugins));
   }
 }

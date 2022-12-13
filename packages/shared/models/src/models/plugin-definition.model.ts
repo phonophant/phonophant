@@ -1,4 +1,5 @@
 import { BasePlugin } from './base-plugin.model';
+import { PluginTag } from './plugin-tags.enum';
 
 export enum PluginDefinitionSource {
   Local = 'Local',
@@ -7,15 +8,14 @@ export enum PluginDefinitionSource {
 
 interface BasePluginDefinition {
   name: string;
+  version?: string;
   source: PluginDefinitionSource;
   active?: boolean;
   options?: any;
-  instance?: BasePlugin<any>;
 }
 
 export interface NpmPluginDefinition extends BasePluginDefinition {
   packageName: string;
-  version: string;
 }
 
 export interface LocalPluginDefinition extends BasePluginDefinition {
@@ -23,4 +23,16 @@ export interface LocalPluginDefinition extends BasePluginDefinition {
   isRelative?: boolean;
 }
 
+export interface RuntimePluginData {
+  instance?: BasePlugin<any>;
+  piletLocation?: string;
+  description?: string;
+  tags?: PluginTag[];
+  settingsEndpoint?: string;
+  author?: string;
+}
+
 export type PluginDefinition = NpmPluginDefinition | LocalPluginDefinition;
+export type NpmPlugin = NpmPluginDefinition & RuntimePluginData;
+export type LocalPlugin = LocalPluginDefinition & RuntimePluginData;
+export type Plugin = NpmPlugin | LocalPlugin;

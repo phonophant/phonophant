@@ -1,14 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es5",                          
+    "target": "es5",
+    "declaration": true,
     "module": "commonjs",                    
     "lib": ["es6"],                     
     "allowJs": true,
-    "outDir": "build",                          
-    "rootDir": "src",
+    "outDir": "dist",                          
     "strict": true,         
     "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": [
+    "src/exposer"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/shell"
+  ]
 }

@@ -1,5 +1,6 @@
-import { PluginDefinition } from './plugin-definition.model';
+import { Plugin } from './plugin-definition.model';
 
 export abstract class BasePluginManager {
-  abstract getPluginByName(pluginName: string): PluginDefinition | null;
+  abstract getPluginByName(pluginName: string): Plugin | null;
+  abstract getAllPlugins(): Plugin[];
 }

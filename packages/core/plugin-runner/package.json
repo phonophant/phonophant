@@ -17,8 +17,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
+    "@phonophant/piral": "1.0.0",
+    "@phonophant/piral-feed-server": "1.0.0",
     "@phonophant/shared-models": "1.0.0",
     "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -35,6 +38,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "28.1.3",
+    "piral-cli-webpack5": "0.15",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
@@ -42,7 +46,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "undefined": "C:/Users/hexag/workspace/audiobear/packages/core/piral/dist/emulator/phonophant-piral-1.0.0.tgz"
   },
   "jest": {
     "moduleFileExtensions": [

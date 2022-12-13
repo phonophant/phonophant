@@ -1,6 +1,6 @@
 import TriggerActionManager from './trigger-action-manager';
 import PluginManager from './plugin-manager';
-import { createMockNpmPluginDefinition } from './plugin-definition.mock';
+import { createMockNpmPlugin } from './plugin-definition.mock';
 import { BasePlugin, PluginType } from '@phonophant/shared-models';
 import { Application } from 'express';
 
@@ -9,7 +9,7 @@ jest.mock('./plugin-manager', () => {
   return {
     default: jest.fn().mockImplementation(() => {
         return {getPluginByName: (name: string) => {
-          return createMockNpmPluginDefinition({
+          return createMockNpmPlugin({
             name,
             instance: {
               init: () => {},
@@ -53,7 +53,7 @@ describe('TriggerActionManager', () => {
   beforeEach(() => {
     jest.clearAllMocks;
     mockPluginDefinitionInstanceExecution.mockClear();
-    pluginManager = new PluginManager();
+    pluginManager = new PluginManager(expressMock);
     triggerActionManager = new TriggerActionManager(pluginManager, expressMock);
   });
 

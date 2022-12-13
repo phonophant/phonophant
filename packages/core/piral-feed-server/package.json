@@ -1,26 +1,22 @@
 {
-  "name": "@phonophant/vlc-player",
+  "name": "@phonophant/piral-feed-server",
   "version": "1.0.0",
   "description": "",
   "main": "./build/main.js",
   "scripts": {
-    "build": "rimraf ./build && tsc",
-    "test": "jest"
+    "build": "rimraf ./build && tsc"
   },
   "keywords": [],
   "author": "Christian Bühlmeyer",
   "license": "MIT",
   "devDependencies": {
     "@phonophant/shared-models": "1.0.0",
-    "@types/jest": "^29.2.3",
-    "@types/node": "^18.11.9",
     "rimraf": "^3.0.2",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.3",
+    "undefined": "C:/Users/hexag/workspace/audiobear/packages/core/piral/dist/emulator/phonophant-piral-1.0.0.tgz"
   },
   "dependencies": {
-    "jest": "^29.3.1",
-    "net": "^1.0.2",
-    "ts-jest": "^29.0.3"
+    "@types/express": "^4.17.14"
   },
   "jest": {
     "moduleFileExtensions": [
