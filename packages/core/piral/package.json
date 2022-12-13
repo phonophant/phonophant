@@ -1,0 +1,53 @@
+{
+  "name": "@phonophant/piral",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "keywords": [
+    "piral"
+  ],
+  "dependencies": {
+    "@types/express": "^4.17.14",
+    "piral": "0.15.2",
+    "piral-base": "0.15.2",
+    "piral-core": "0.15.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^4.7.1",
+    "react-router": "^5",
+    "react-router-dom": "^5"
+  },
+  "scripts": {
+    "start": "concurrently --kill-others \"npm run start:tailwind\" \"npm run start:piral\"",
+    "start:tailwind": "tailwindcss -i ./src/shell/input.css -o ./src/shell/output.css --watch",
+    "start:piral": "piral debug",
+    "build": "npm run build:tailwind && npm run build:piral && npm run build:exposer",
+    "build:exposer": "tsc --p ./tsconfig.exposer.json",
+    "build:piral": "piral build",
+    "build:tailwind": "tailwindcss -i ./src/shell/input.css -o ./src/shell/output.css",
+    "postinstall:piral": "piral declaration"
+  },
+  "app": "./src/shell/index.html",
+  "types": "dist/main.d.ts",
+  "importmap": {
+    "imports": {},
+    "inherit": [
+      "piral-base",
+      "piral-core",
+      "piral"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-router": "^5",
+    "@types/react-router-dom": "^5",
+    "concurrently": "^7.6.0",
+    "piral-cli": "0.15.2",
+    "piral-cli-webpack5": "0.15",
+    "tailwindcss": "^3.2.4",
+    "typescript": "latest",
+    "undefined": "C:/Users/hexag/workspace/audiobear/packages/core/piral/dist/emulator/phonophant-piral-1.0.0.tgz"
+  }
+}
